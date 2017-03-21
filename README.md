@@ -24,6 +24,7 @@ Configure
 =========
 
 Open the file bot.properties
+
 Put the value of your Telegram Token in key 
 
 bot_token=<your_telegram_bot_token>
@@ -40,13 +41,15 @@ Ctrl-C or kill the process to stop the bot.
 Usage
 =====
 
-So far the bot will answers to these messages/commands:
+So far the bot will answer to these messages/commands:
 
-* Say ciao, hello, greet the bot and It will answers you!
+* Say ciao, hello, greet the bot and It will answer you!
 
 * /start
 
-* /<country_code>, where a country code must be as specified in https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2 or in https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3 
+* /<country_code>, 
+where a country code must be as specified in https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2 
+or in https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3 
 example: /it or /IT, /US or /USA...
 
 
