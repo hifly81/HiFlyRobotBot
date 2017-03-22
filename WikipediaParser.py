@@ -20,5 +20,9 @@ class WikipediaParser:
         for span in doc.iter('span'):
             # found country code
             if span.text == country_code:
-                country_wiki_page = span.getparent().getparent().getparent().getchildren()[0].getchildren()[0].get('href')
-                return BotConfig.get_property('WIKIPEDIA', 'wikipedia_base_url') + country_wiki_page
+                try:
+                    country_wiki_page = span.getparent().getparent().getparent().getchildren()[0].getchildren()[0].get(
+                        'href')
+                    return BotConfig.get_property('WIKIPEDIA', 'wikipedia_base_url') + country_wiki_page
+                except:
+                    return None
