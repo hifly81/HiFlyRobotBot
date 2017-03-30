@@ -6,9 +6,8 @@ python hifly_robot_bot.sh
 Ctrl-C or kill the process to stop the bot.
 """
 
-from BotLongPolling import BotLongPolling
-from BotCommandHandler import BotCommandHandler
-
+from bot.long_polling import BotLongPolling
+from bot.command_handler import BotCommandHandler
 
 bot = BotLongPolling()
 bot_command_handler = BotCommandHandler()

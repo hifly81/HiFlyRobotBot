@@ -1,5 +1,5 @@
 import requests
-from BotConfig import BotConfig
+from config import BotConfig
 
 
 class BotLongPolling:

@@ -1,12 +1,14 @@
-import requests
 import os.path
-from BotConfig import BotConfig
-from WikipediaParser import WikipediaParser
+
+import requests
+from parsers import wikipedia, youtube
+from config import BotConfig
 
 
 class BotCommandHandler:
     greetings = ('ciao', 'salve', 'hello', 'hi', 'priviet')
-    wiki = WikipediaParser()
+    wiki = wikipedia.WikipediaParser()
+    youtube = youtube.YoutubeParser()
 
     def __init__(self):
         token = BotConfig.get_property('SECURITY', 'bot_token')
@@ -47,7 +49,8 @@ class BotCommandHandler:
         if self.start(last_chat_text, last_chat_id) is None:
             if self.greet(last_chat_text, last_chat_id, last_chat_username) is None:
                 if self.country(last_chat_text, last_chat_id) is None:
-                    self.send_unrecognized_message(last_chat_id)
+                    if self.jazz(last_chat_text, last_chat_id) is None:
+                        self.send_unrecognized_message(last_chat_id)
 
     def start(self, message, chat_id):
         """The bot sends a startup message
@@ -82,6 +85,19 @@ class BotCommandHandler:
             country_wiki_page = self.wiki.get_country_page(country_code)
             if country_wiki_page is not None:
                 return self.send_photo(chat_id, files, self.wiki.get_country_page(country_code))
+            else:
+                return None
+        else:
+            return None
+
+    def jazz(self, message, chat_id):
+        """The bot reacts to a /jazz command
+        """
+
+        if message == '/jazz':
+            result = self.youtube.get_random_playlist_result(message)
+            if result is not None:
+                return self.send_message(chat_id, result)
             else:
                 return None
         else:

@@ -1,5 +1,6 @@
 # HiFlyRobotBot
 another bot 4 Telegram
+It is based of course on my tastes
 
 Find me at http://t.me/HiflyRobotBot
 
@@ -18,6 +19,7 @@ Required python libs:
 
     $ sudo pip install requests
     $ sudo pip install lxml
+    $ sudo pip install beautifulsoup4
 
 
 Configure
@@ -47,10 +49,13 @@ So far the bot will answer to these messages/commands:
 
 * /start
 
-* /<country_code>, 
+* /<country_code> 
 where a country code must be as specified in https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2 
 or in https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3 
 example: /it or /IT, /US or /USA...
+
+* /jazz 
+the bot will propose you a random jazz playlist from youtube
 
 
 License
