@@ -1,45 +1,19 @@
 import os.path
 
-import requests
-from parsers import wikipedia, youtube
+from parsers import wikipedia, youtube, words
 from config import BotConfig
+from bot.operation import BotOperation
 
 
 class BotCommandHandler:
-    greetings = ('ciao', 'salve', 'hello', 'hi', 'priviet')
     wiki = wikipedia.WikipediaParser()
     youtube = youtube.YoutubeParser()
+    words = words.WordsMatcher()
+    bot_operation = BotOperation()
 
     def __init__(self):
         token = BotConfig.get_property('SECURITY', 'bot_token')
         self.api_url = BotConfig.get_property('API', 'telegram_url') + "{}/".format(token)
-
-    def send_unrecognized_message(self, chat_id):
-        """Send a text message to telegram.
-        Need the chat_id
-        """
-        params = {'chat_id': chat_id, 'text': "Sorry but I can't recognize your question! Try with another one..."}
-        method = 'sendMessage'
-        resp = requests.post(self.api_url + method, params)
-        return resp
-
-    def send_message(self, chat_id, text):
-        """Send a text message to telegram.
-        Need the chat_id
-        """
-        params = {'chat_id': chat_id, 'text': text}
-        method = 'sendMessage'
-        resp = requests.post(self.api_url + method, params)
-        return resp
-
-    def send_photo(self, chat_id, files, caption):
-        """Send a photo message to telegram with its caption
-        Need the chat_id
-        """
-        params = {'chat_id': chat_id, 'caption': caption}
-        method = 'sendPhoto'
-        resp = requests.post(self.api_url + method, data=params, files=files)
-        return resp
 
     def dispatch(self, last_chat_text, last_chat_id, last_chat_username):
         """Parse the incoming command from client
@@ -50,25 +24,25 @@ class BotCommandHandler:
             if self.greet(last_chat_text, last_chat_id, last_chat_username) is None:
                 if self.country(last_chat_text, last_chat_id) is None:
                     if self.jazz(last_chat_text, last_chat_id) is None:
-                        self.send_unrecognized_message(last_chat_id)
+                        self.bot_operation.send_unrecognized_message(last_chat_id)
 
     def start(self, message, chat_id):
         """The bot sends a startup message
         """
 
         if message == '/start':
-            return self.send_message(chat_id, 'Welcome to HiflyRobotBot! I\'m happy to help you!')
+            return self.bot_operation(chat_id, 'Welcome to HiflyRobotBot! I\'m happy to help you!')
         else:
             return None
 
     def greet(self, message, chat_id, username):
         """The bot greets you
         """
-
         message = message.lower()
-
-        if message in self.greetings:
-            return self.send_message(chat_id, 'Hey, welcome {}'.format(username))
+        greets = BotConfig.get_greetings()
+        message_key = self.words.find_greeting(message, greets)
+        if message_key is not None:
+            return self.bot_operation.send_message(chat_id, 'Hey, welcome {}'.format(username) + '. Maybe you are ' + greets[message_key])
         else:
             return None
 
@@ -84,7 +58,7 @@ class BotCommandHandler:
             files = {'photo': (image_path, open(image_path))}
             country_wiki_page = self.wiki.get_country_page(country_code)
             if country_wiki_page is not None:
-                return self.send_photo(chat_id, files, self.wiki.get_country_page(country_code))
+                return self.bot_operation.send_photo(chat_id, files, self.wiki.get_country_page(country_code))
             else:
                 return None
         else:
@@ -97,7 +71,7 @@ class BotCommandHandler:
         if message == '/jazz':
             result = self.youtube.get_random_playlist_result(message)
             if result is not None:
-                return self.send_message(chat_id, result)
+                return self.bot_operation.send_message(chat_id, result)
             else:
                 return None
         else:
